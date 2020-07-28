@@ -9,9 +9,7 @@ import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
     private Connection connection = null;
-    private Statement statement = null;
-    private final List<User> list = new ArrayList<>();
-
+    //private Statement statement = null;
 
     public UserDaoJDBCImpl() {
         try {
@@ -24,8 +22,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void createUsersTable() {
         try {
-            statement = connection.createStatement();
-            statement.executeUpdate("CREATE TABLE USERS " +
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS USERS " +
                     "(id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
                     " name VARCHAR(32) null, " +
                     " last_name VARCHAR(32) null, " +
@@ -37,7 +35,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void dropUsersTable() {
         try {
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
             statement.executeUpdate(
                     "DROP TABLE IF EXISTS USERS");
         } catch (SQLException exception) {
@@ -66,12 +64,14 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public List<User> getAllUsers() {
-
+        List<User> list = new ArrayList<>();
         try {
+            Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(
                     "SELECT * FROM USERS");
 
             while (resultSet.next()) {
+
                 String name = resultSet.getString("name");
                 String lastName = resultSet.getString("last_name");
                 byte age = resultSet.getByte("age");
@@ -86,6 +86,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void cleanUsersTable() {
         try {
+            Statement statement = connection.createStatement();
             statement.executeUpdate(
                     "DELETE FROM USERS");
         } catch (SQLException ex) {
